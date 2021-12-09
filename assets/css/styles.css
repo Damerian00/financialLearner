@@ -1,0 +1,6 @@
+* {list-style: none;}
+.image.phone .inner{min-height: 30vh;}
+.validator {color: red; visibility: hidden;}
+#header input{color: rgba(0, 0, 0, 0.75)}
+.inner ul {display: flex; flex-direction: column; justify-content: space-between;}
+.bal {}

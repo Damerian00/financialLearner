@@ -4,13 +4,14 @@ const withdraw = document.getElementById("withdraw");
 const validator = document.querySelector(".validator");
 const balance = document.querySelector(".bal");
 const reset = document.getElementById("reset");
+const history = document.querySelector(".history");
 //Array is (float, string) pairs
 let transactions = [];
 
 /* initializes the program */
 init();
 
-//TODO:Validate number entered is positive only
+//TODO:
 
 /* Deposit Function here with validation*/
 deposit.addEventListener("click", function (event) {
@@ -55,17 +56,32 @@ withdraw.addEventListener("click", function (event) {
   }
   updateBalance(1, c);
 });
-/* Reset Function
-triggered by button click, resets balance to 0 */
+/* Delete All Function
+triggered by button click, resets balance to 0,
+sets transactions to initial balance */
 reset.addEventListener("click", function (event) {
+    //TODO - need to clear transaction history
   event.preventDefault();
   let initBal = 0.0;
   localStorage.setItem("balance", JSON.stringify(initBal));
+
+  console.log("check transactions", transactions);
   displayBalance("0.00");
+  while (history.firstChild) {
+      history.removeChild(history.firstChild);
+  }
+  clearTransactions();
+  displayTransactions();
 });
+// while (parent.firstChild) {
+//     parent.removeChild(parent.firstChild);
+// }
+
 
 /*Initialize Function
-sets balance to 0 in local storage and calls to update display*/
+sets balance to 0 in local storage, 
+sets transaction to initial balance, 
+and makes a call to update display*/
 function init() {
   if (
     JSON.parse(localStorage.getItem("balance")) === null ||
@@ -73,10 +89,11 @@ function init() {
   ) {
     let initialValue = 0.0;
     localStorage.setItem("balance", JSON.stringify(initialValue));
+    clearTransactions();
     displayBalance("0.00");
   } else {
-    transactions.push([0.00, "Starting Balance"]);
     let bal = JSON.parse(localStorage.getItem("balance"));
+    let transactions = JSON.parse(localStorage.getItem("transactions"));
     displayBalance(bal.toString());
   }
 }
@@ -94,6 +111,9 @@ function updateBalance(operation, amount) {
     let transaction = parseFloat(amount);
     console.log("this is the transaction", transaction);
     c = curr + transaction;
+    c = c.toFixed(2);
+    transactions.push([c, "Deposit"]);
+    storeTransactions();
     localStorage.setItem("balance", JSON.stringify(c));
   }
   //subtract
@@ -101,10 +121,11 @@ function updateBalance(operation, amount) {
     let curr = parseFloat(currentBalance);
     let transaction = parseFloat(amount);
     c = curr - transaction;
+    c = c.toFixed(2);
+    transactions.push([c, "Withdrawl"]);
+    storeTransactions();
     localStorage.setItem("balance", JSON.stringify(c));
   }
-
-  c = c.toFixed(2);
   displayBalance(c.toString());
 }
 
@@ -123,22 +144,56 @@ function displayBalance(value) {
   // ac.slice(0, (ac.indexOf('.')) + 3);
   console.log("display balance called", ac);
   balance.innerHTML = `$${ac}`;
+  //test();
+  displayTransactions();
 }
 
-/* 
-init();
-regex = \d+\.+\d{0,2}
-localStorage.setItem("City", JSON.stringify(searchResults));
+/*Updates localStorage transactions array*/
+function storeTransactions(){
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+}
 
-function init (){
-    if (localStorage.getItem("City") != null) {
-         searchResults = JSON.parse(localStorage.getItem("City"));
- 
-        
+/*clears localStorage transactions and sets it to initial balance */
+function clearTransactions(){
+    transactions = [["0.00", "Initial Balance"]];
+    console.log("display transactions", transactions);
+    storeTransactions();
+}
+
+/*Propagates the transaction history */
+function displayTransactions(){
+    //TODO - update html list through pops
+    let trans = JSON.parse(localStorage.getItem("transactions"));
+    let len = trans.length;
+    console.log(trans)
+
+        for(let i = 0; i < 3 && i < len; i++){
+            //populate list
+            let pair = trans.pop();
+            console.log("displauy pair", pair);
+            let amount = pair[0];
+            console.log(amount);
+            let transType = pair[1];
+            console.log(transType);
+            const li = document.createElement('li');
+            console.log("display li", li);
+            li.innerHTML = `$${amount} <span>${transType}</span>`;
+            
+        //    span = span.innerHTML = transType;
+            
+            history.prepend(li);
+    
         }
+    
 }
-` $ ${bal}`
-*/
 
-// a = document.querySelector('#deposit')
-// a.addEventListener('click', functioinblah)
+function test(){
+    /* let li = document.createElement('li');
+    li.innerHTML = "0.00";
+    history.prepend(li); */
+    let bal = '0.00'
+    let li = document.createElement('li');
+    console.log(li, history);
+    li.innerHTML = bal;
+    history.appendChild(li);
+}

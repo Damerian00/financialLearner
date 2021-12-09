@@ -3,4 +3,12 @@
 .validator {color: red; visibility: hidden;}
 #header input{color: rgba(0, 0, 0, 0.75)}
 .inner ul {display: flex; flex-direction: column; justify-content: space-between;}
-.bal {}
+.inner li {padding:0}
+ul.history{}
+.history p {margin-bottom: .5em}
+.history li {    display: flex;
+    flex-direction: row;
+    justify-content: space-between;}
+.history span {padding: 0 1vw 0 0;}
+.bal {font-weight: bold; text-shadow: 4px 4px 3.5px #151616;}
+#header .inner p {font-size: 1em}
